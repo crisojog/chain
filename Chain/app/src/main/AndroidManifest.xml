@@ -10,10 +10,10 @@
         <activity
             android:name="com.farapile.android.chain.TaskDetailActivity"
             android:label="@string/title_task_detail"
-            android:parentActivityName="com.farapile.android.chain.TaskListActivity" >
+            android:parentActivityName="com.farapile.android.chain.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".TaskListActivity" />
+                android:value=".MainActivity" />
         </activity>
         <activity
             android:name="com.farapile.android.chain.MainActivity"

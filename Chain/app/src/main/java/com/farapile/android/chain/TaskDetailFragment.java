@@ -31,6 +31,7 @@ public class TaskDetailFragment extends Fragment {
 
         if (intent != null && intent.hasExtra(Intent.EXTRA_TEXT)) {
             String content = intent.getStringExtra(Intent.EXTRA_TEXT);
+            ((TaskDetailActivity)getActivity()).getSupportActionBar().setTitle(content);
             ((TextView) rootView.findViewById(R.id.task_detail)).setText(content);
         }
 

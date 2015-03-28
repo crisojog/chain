@@ -1,6 +1,5 @@
 package com.farapile.android.chain;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -45,11 +44,5 @@ public class TaskListFragment extends Fragment {
             }
         });
         return rootView;
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        ((MainActivity) activity).onSectionAttached(1);
     }
 }
