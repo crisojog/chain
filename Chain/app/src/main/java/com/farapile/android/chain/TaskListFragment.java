@@ -1,8 +1,10 @@
 package com.farapile.android.chain;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,6 +45,8 @@ public class TaskListFragment extends Fragment {
                 startActivity(intent);
             }
         });
+
+        new MainActivity.EndpointsAsyncTask().execute(new Pair<Context, String>(getActivity(), "Manfred"));
         return rootView;
     }
 }

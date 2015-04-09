@@ -1,11 +1,13 @@
 package com.farapile.android.chain;
 
+import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.util.Pair;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -22,11 +24,18 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.common.api.GoogleApiClient;
+import com.farapile.android.chain.backend.myApi.MyApi;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
+import com.google.api.client.extensions.android.http.AndroidHttp;
+import com.google.api.client.extensions.android.json.AndroidJsonFactory;
+import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
+import com.google.api.client.googleapis.services.GoogleClientRequestInitializer;
 
+import java.io.IOException;
 import java.io.InputStream;
+
+import static com.farapile.android.chain.backend.myApi.MyApi.Builder;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -41,8 +50,6 @@ public class MainActivity extends ActionBarActivity {
     private static final String TAG = "MAIN";
     private static final int PROFILE_PIC_SIZE = 80;
 
-    public static GoogleApiClient mGoogleApiClient;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,12 +58,14 @@ public class MainActivity extends ActionBarActivity {
 
         initNavigationDrawer();
 
-        getProfileInformation();
+        //getProfileInformation();
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.container, new TaskListFragment())
-                .commit();
+        //if(GoogleApi.mGoogleApiClient.isConnected()) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.container, new TaskListFragment())
+                    .commit();
+        //}
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -66,14 +75,18 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void getProfileInformation() {
+        Log.d(TAG, "getProfileInformation()");
         try {
-            if (Plus.PeopleApi.getCurrentPerson(mGoogleApiClient) != null) {
+            if(!GoogleApi.mGoogleApiClient.isConnected()) {
+                GoogleApi.mGoogleApiClient.connect(); //dumbest hack ever
+            }
+            if (Plus.PeopleApi.getCurrentPerson(GoogleApi.mGoogleApiClient) != null) {
                 Person currentPerson = Plus.PeopleApi
-                        .getCurrentPerson(mGoogleApiClient);
+                        .getCurrentPerson(GoogleApi.mGoogleApiClient);
                 String personName = currentPerson.getDisplayName();
                 String personPhotoUrl = currentPerson.getImage().getUrl();
                 String personGooglePlusProfile = currentPerson.getUrl();
-                String email = Plus.AccountApi.getAccountName(mGoogleApiClient);
+                String email = Plus.AccountApi.getAccountName(GoogleApi.mGoogleApiClient);
 
                 Log.e(TAG, "Name: " + personName + ", plusProfile: "
                         + personGooglePlusProfile + ", email: " + email
@@ -222,4 +235,50 @@ public class MainActivity extends ActionBarActivity {
         return super.onPrepareOptionsMenu(menu);
     }
 
+    @Override
+    public void onRestart() {
+        Log.d(TAG, "onRestart()");
+        super.onRestart();
+        //getProfileInformation();
+    }
+
+    public static class EndpointsAsyncTask extends AsyncTask<Pair<Context, String>, Void, String> {
+        private static MyApi myApiService = null;
+        private Context context;
+
+        @Override
+        protected String doInBackground(Pair<Context, String>... params) {
+            if(myApiService == null) {  // Only do this once
+                Builder builder = new Builder(AndroidHttp.newCompatibleTransport(),
+                        new AndroidJsonFactory(), null)
+                        // options for running against local devappserver
+                        // - 10.0.2.2 is localhost's IP address in Android emulator
+                        // - turn off compression when running against local devappserver
+                        .setRootUrl("http://10.0.2.2:8080/_ah/api/")
+                        .setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
+                            @Override
+                            public void initialize(AbstractGoogleClientRequest<?> abstractGoogleClientRequest) throws IOException {
+                                abstractGoogleClientRequest.setDisableGZipContent(true);
+                            }
+                        });
+                // end options for devappserver
+
+                myApiService = builder.build();
+            }
+
+            context = params[0].first;
+            String name = params[0].second;
+
+            try {
+                return myApiService.sayHi(name).execute().getData();
+            } catch (IOException e) {
+                return e.getMessage();
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            Toast.makeText(context, result, Toast.LENGTH_LONG).show();
+        }
+    }
 }
