@@ -5,34 +5,43 @@
     android:layout_height="wrap_content">
 
     <RelativeLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/iconLayout"
-        android:layout_weight="3">
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/taskIcon" />
+        >
+        <LinearLayout
+            android:layout_width="94dp"
+            android:layout_height="94dp"
+            android:layout_marginTop="22dp"
+            android:layout_marginLeft="@dimen/abc_dropdownitem_text_padding_left"
+            android:layout_marginRight="@dimen/abc_dropdownitem_text_padding_left"
+            android:layout_marginBottom="@dimen/abc_dropdownitem_text_padding_left"
+            android:background="@drawable/circle"
+            android:elevation="@dimen/elevation_low"
+            android:id="@+id/taskIcon"
+            android:orientation="horizontal">
+        </LinearLayout>
     </RelativeLayout>
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1">
+        >
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:layout_margin="@dimen/abc_action_bar_default_padding_material"
+            android:layout_marginTop="@dimen/abc_button_padding_horizontal_material"
+            android:layout_marginLeft="@dimen/abc_button_padding_horizontal_material"
             android:paddingTop="@dimen/abc_dropdownitem_text_padding_left"
             android:text="TestItem"
             android:id="@+id/taskName" />
 
         <LinearLayout
             android:orientation="horizontal"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1">
             <LinearLayout
@@ -41,8 +50,9 @@
                 android:layout_height="60dp"
                 android:gravity="center"
                 android:background="@drawable/circle"
+                android:elevation="@dimen/elevation_low"
                 android:id="@+id/taskSoFarLayout"
-                android:layout_margin="@dimen/abc_dropdownitem_text_padding_left">
+                android:layout_margin="@dimen/abc_button_padding_horizontal_material">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -65,8 +75,9 @@
                 android:layout_height="60dp"
                 android:gravity="center"
                 android:background="@drawable/circle"
+                android:elevation="@dimen/elevation_low"
                 android:id="@+id/taskToGoLayout"
-                android:layout_margin="@dimen/abc_dropdownitem_text_padding_left">
+                android:layout_margin="@dimen/abc_button_padding_horizontal_material">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

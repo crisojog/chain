@@ -10,19 +10,21 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.farapile.android.chain.backend.myApi.model.TaskBean;
 import com.farapile.android.chain.dummy.DummyContent;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by crisojog on 26/03/15.
  */
-public class TaskAdapter extends ArrayAdapter<DummyContent.DummyItem> {
+public class TaskAdapter extends ArrayAdapter<TaskBean> {
     public TaskAdapter(Context context, int textViewResourceId) {
         super(context, textViewResourceId);
     }
 
-    public TaskAdapter(Context context, int resource, List<DummyContent.DummyItem> items) {
+    public TaskAdapter(Context context, int resource, ArrayList<TaskBean> items) {
         super(context, resource, items);
     }
 
@@ -39,15 +41,17 @@ public class TaskAdapter extends ArrayAdapter<DummyContent.DummyItem> {
 
         }
 
-        DummyContent.DummyItem p = getItem(position);
+        TaskBean p = getItem(position);
 
         if (p != null) {
 
             TextView t1 = (TextView) v.findViewById(R.id.taskName);
             if (t1 != null) {
-                t1.setText(p.content);
+                t1.setText("Task " + p.getType());
             }
 
+            LinearLayout t = (LinearLayout) v.findViewById(R.id.taskIcon);
+            ((GradientDrawable) t.getBackground()).setColor(Color.argb(255, 255, position * 80, position * 80));
             LinearLayout c1 = (LinearLayout) v.findViewById(R.id.taskSoFarLayout);
             ((GradientDrawable) c1.getBackground()).setColor(Color.argb(255, 255, position * 80, position * 80));
             LinearLayout c2 = (LinearLayout) v.findViewById(R.id.taskToGoLayout);
