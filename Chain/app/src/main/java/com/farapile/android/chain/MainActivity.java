@@ -1,13 +1,11 @@
 package com.farapile.android.chain;
 
-import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.util.Pair;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -24,18 +22,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.farapile.android.chain.backend.myApi.MyApi;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
-import com.google.api.client.extensions.android.http.AndroidHttp;
-import com.google.api.client.extensions.android.json.AndroidJsonFactory;
-import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
-import com.google.api.client.googleapis.services.GoogleClientRequestInitializer;
 
-import java.io.IOException;
 import java.io.InputStream;
-
-import static com.farapile.android.chain.backend.myApi.MyApi.Builder;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -60,10 +50,12 @@ public class MainActivity extends ActionBarActivity {
 
         //getProfileInformation();
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.container, new TaskListFragment())
-                .commit();
+        if (savedInstanceState == null) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.container, new TaskListFragment())
+                    .commit();
+        }
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {

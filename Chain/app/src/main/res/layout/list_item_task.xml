@@ -18,8 +18,12 @@
             android:layout_marginBottom="@dimen/abc_dropdownitem_text_padding_left"
             android:background="@drawable/circle"
             android:elevation="@dimen/elevation_low"
-            android:id="@+id/taskIcon"
+            android:id="@+id/taskIconLayout"
             android:orientation="horizontal">
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/taskIcon" />
         </LinearLayout>
     </RelativeLayout>
     <LinearLayout

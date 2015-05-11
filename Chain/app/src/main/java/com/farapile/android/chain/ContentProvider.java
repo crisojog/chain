@@ -65,7 +65,7 @@ public class ContentProvider {
         new EndpointsGetTasksAsyncTask().execute(p);
     }
 
-    public void addTask(UUID uuid, String gPlusId, int type, String name, String description, String date, int numDays, Context c) {
+    public void addTask(UUID uuid, String gPlusId, int type, String name, String description, long date, int numDays, Context c) {
         new EndpointsAddTaskAsyncTask().execute(new Pair<Task, Context>(
                 new Task(
                         uuid.toString(),
@@ -76,6 +76,13 @@ public class ContentProvider {
                         type,
                         numDays),
                 c));
+    }
+
+    public void updateCurrent(String id, Context c) {
+        new EndpointsUpdateCurrentAsyncTask().execute(new Pair<String, Context>(
+                id,
+                c
+        ));
     }
 
     private class EndpointsGetTasksAsyncTask extends AsyncTask<Pair<String, Callable>, Void, List<TaskBean>> {
@@ -153,11 +160,44 @@ public class ContentProvider {
         }
     }
 
-    class Task {
-        public String id, gPlusId, description, date, name;
-        public int type, numDays;
+    private class EndpointsUpdateCurrentAsyncTask extends AsyncTask<Pair<String, Context>, Void, Integer> {
 
-        public Task(String id, String gPlusId, String name, String description, String date, int type, int numDays) {
+        private Context context;
+        private String id;
+
+        @Override
+        protected Integer doInBackground(Pair<String, Context>... params) {
+            init();
+
+            context = params[0].second;
+            id = params[0].first;
+            try {
+                myApiService.updateCurrentDay(
+                        id
+                ).execute();
+            } catch (IOException e) {
+                e.printStackTrace();
+                return 1;
+            }
+            return 0;
+        }
+
+
+        @Override
+        protected void onPostExecute(Integer result) {
+            if (result == 0)
+                Toast.makeText(context, "Chain updated for today", Toast.LENGTH_SHORT).show();
+            else
+                Toast.makeText(context, "Could not update chain", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    class Task {
+        public String id, gPlusId, description, name;
+        public int type, numDays;
+        public long date;
+
+        public Task(String id, String gPlusId, String name, String description, long date, int type, int numDays) {
             this.id = id;
             this.gPlusId = gPlusId;
             this.name = name;

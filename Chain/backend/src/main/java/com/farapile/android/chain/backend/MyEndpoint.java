@@ -13,9 +13,7 @@ import com.google.api.server.spi.response.ConflictException;
 import com.google.api.server.spi.response.NotFoundException;
 import com.google.appengine.api.datastore.QueryResultIterator;
 
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import javax.inject.Named;
@@ -65,12 +63,11 @@ public class MyEndpoint {
                                  @Named("type") int type,
                                  @Named("name") String name,
                                  @Named("description") String description,
-                                 @Named("startDate") String startDate, // TODO: after debugging, change back to Date and remove Nullable
+                                 @Named("startDate") long startDate,
                                  @Named("duration") int duration ) throws ParseException {
         if(description == null) description = "";
-        if(startDate == null) startDate = "29-Apr-2010,13:00:14 PM";
-        DateFormat formatter = new SimpleDateFormat("d-MMM-yyyy,HH:mm:ss aaa");
-        TaskBean newTask = new TaskBean(Id, userGplusID, type, name, description, formatter.parse(startDate), duration);
+
+        TaskBean newTask = new TaskBean(Id, userGplusID, type, name, description, startDate, duration);
         ofy().save().entities(newTask).now();
         return newTask;
     }

@@ -1,5 +1,6 @@
 package com.farapile.android.chain;
 
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -46,13 +47,15 @@ public class NewTaskActivity extends ActionBarActivity {
             public void onClick(View view) {
                 //Toast.makeText(NewTaskActivity.this, "Clicked", Toast.LENGTH_SHORT).show();
                 int type = spinner.getSelectedItemPosition();
+                Log.d("asdfadsf", type + "");
+
                 mContentProvider.addTask(
                         UUID.randomUUID(),
                         "asdf",
                         type,
                         mNameText.getText().toString(),
                         mDescText.getText().toString(),
-                        "29-Apr-2010,13:00:14 PM",
+                        System.currentTimeMillis(),
                         numDays,
                         NewTaskActivity.this
                 );
@@ -98,6 +101,7 @@ public class NewTaskActivity extends ActionBarActivity {
                 }
             }
         });
+        ((GradientDrawable) minusButton.getBackground()).setColor(getResources().getColor(R.color.accent));
         Button plusButton = (Button) findViewById(R.id.button_add_days);
         plusButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,6 +112,7 @@ public class NewTaskActivity extends ActionBarActivity {
                 }
             }
         });
+        ((GradientDrawable) plusButton.getBackground()).setColor(getResources().getColor(R.color.accent));
 
     }
 

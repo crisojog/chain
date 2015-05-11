@@ -49,8 +49,16 @@ public class TaskListFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 TaskBean task = mTaskAdapter.getItem(position);
+                Log.d("bla", task.toString());
                 Intent intent = new Intent(getActivity(), TaskDetailActivity.class)
-                        .putExtra(Intent.EXTRA_TEXT, "Task " + task.getType());
+                        .putExtra("Id", task.getId())
+                        .putExtra("userGplusID", task.getUserGplusID())
+                        .putExtra("type", task.getType())
+                        .putExtra("name", task.getName())
+                        .putExtra("description", task.getDescription())
+                        .putExtra("startDate", task.getStartDate())
+                        .putExtra("duration", task.getDuration())
+                        .putExtra("current", task.getCurrent());
                 startActivity(intent);
             }
         });

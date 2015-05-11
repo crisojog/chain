@@ -4,15 +4,12 @@ import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
 
-
-import java.util.Date;
-
 @Entity
 public class TaskBean {
 
     public TaskBean() {}
 
-    public TaskBean(String Id, String userGplusID, int type, String name, String description, Date startDate, int duration) {
+    public TaskBean(String Id, String userGplusID, int type, String name, String description, long startDate, int duration) {
         this.Id = Id;
         this.userGplusID = userGplusID;
         this.type = type;
@@ -56,11 +53,11 @@ public class TaskBean {
         this.description = description;
     }
 
-    public Date getStartDate() {
+    public long getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(long startDate) {
         this.startDate = startDate;
     }
 
@@ -93,10 +90,9 @@ public class TaskBean {
     int type;
     String name;
     String description;
-    Date startDate;
+    long startDate;
     int duration;
     int current;
-
 
     @Override
     public boolean equals(Object o) {
@@ -106,15 +102,14 @@ public class TaskBean {
         TaskBean taskBean = (TaskBean) o;
 
         if (type != taskBean.type) return false;
+        if (startDate != taskBean.startDate) return false;
         if (duration != taskBean.duration) return false;
         if (current != taskBean.current) return false;
         if (Id != null ? !Id.equals(taskBean.Id) : taskBean.Id != null) return false;
         if (userGplusID != null ? !userGplusID.equals(taskBean.userGplusID) : taskBean.userGplusID != null)
             return false;
         if (name != null ? !name.equals(taskBean.name) : taskBean.name != null) return false;
-        if (description != null ? !description.equals(taskBean.description) : taskBean.description != null)
-            return false;
-        return !(startDate != null ? !startDate.equals(taskBean.startDate) : taskBean.startDate != null);
+        return !(description != null ? !description.equals(taskBean.description) : taskBean.description != null);
 
     }
 
@@ -125,7 +120,7 @@ public class TaskBean {
         result = 31 * result + type;
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (description != null ? description.hashCode() : 0);
-        result = 31 * result + (startDate != null ? startDate.hashCode() : 0);
+        result = 31 * result + (int) (startDate ^ (startDate >>> 32));
         result = 31 * result + duration;
         result = 31 * result + current;
         return result;

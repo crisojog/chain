@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primary">#FF9800</color>
-    <color name="primaryDark">#E65100</color>
+    <color name="primary">#2196F3</color>
+    <color name="primaryDark">#1565C0</color>
 
-    <color name="ripple">#ff80ab</color>
-    <color name="accent">#ff4081</color>
-    <color name="accent_pressed">#f50057</color>
+    <color name="ripple">#81C784</color>
+    <color name="accent">#43A047</color>
+    <color name="accent_pressed">#2E7D32</color>
+
+    <color name="sports">#8BC34A</color>
+    <color name="diet">#00BCD4</color>
+    <color name="hobby">#03A9F4</color>
+    <color name="work">#607D8B</color>
 </resources>
