@@ -9,22 +9,14 @@ package com.farapile.android.chain.backend;
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
-import com.google.api.server.spi.config.Nullable;
 import com.google.api.server.spi.response.ConflictException;
 import com.google.api.server.spi.response.NotFoundException;
-import com.google.appengine.api.datastore.DatastoreService;
-import com.google.appengine.api.datastore.DatastoreServiceFactory;
-import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.FetchOptions;
-import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.QueryResultIterator;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 import javax.inject.Named;
 
@@ -68,16 +60,17 @@ public class MyEndpoint {
     /* TASK PART */
 
     @ApiMethod(name = "createTask")
-    public TaskBean createTask(@Named("Id") int Id,
-                               @Named("userGplusID") String userGplusID,
-                               @Named("type") int type,
-                               @Nullable @Named("description") String description,
-                               @Nullable @Named("startDate") String startDate, // TODO: after debugging, change back to Date and remove Nullable
-                               @Named("duration") int duration ) throws ParseException {
+      public TaskBean createTask(@Named("Id") String Id,
+                                 @Named("userGplusID") String userGplusID,
+                                 @Named("type") int type,
+                                 @Named("name") String name,
+                                 @Named("description") String description,
+                                 @Named("startDate") String startDate, // TODO: after debugging, change back to Date and remove Nullable
+                                 @Named("duration") int duration ) throws ParseException {
         if(description == null) description = "";
         if(startDate == null) startDate = "29-Apr-2010,13:00:14 PM";
         DateFormat formatter = new SimpleDateFormat("d-MMM-yyyy,HH:mm:ss aaa");
-        TaskBean newTask = new TaskBean(Id, userGplusID, type, description, formatter.parse(startDate), duration);
+        TaskBean newTask = new TaskBean(Id, userGplusID, type, name, description, formatter.parse(startDate), duration);
         ofy().save().entities(newTask).now();
         return newTask;
     }
@@ -96,7 +89,7 @@ public class MyEndpoint {
     }
 
     @ApiMethod(name = "updateCurrentDay")
-    public TaskBean updateCurrentDay(@Named("Id") int id) throws NotFoundException {
+    public TaskBean updateCurrentDay(@Named("Id") String id) throws NotFoundException {
         TaskBean task = findTask(id);
         if (task == null) {
             throw new NotFoundException("Task does not exist");
@@ -106,7 +99,7 @@ public class MyEndpoint {
         return task;
     }
 
-    private TaskBean findTask(int id) {
+    private TaskBean findTask(String id) {
         return ofy().load().type(TaskBean.class).id(id).now();
     }
 

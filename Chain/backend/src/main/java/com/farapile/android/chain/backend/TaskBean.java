@@ -12,10 +12,11 @@ public class TaskBean {
 
     public TaskBean() {}
 
-    public TaskBean(long Id, String userGplusID, int type, String description, Date startDate, int duration) {
+    public TaskBean(String Id, String userGplusID, int type, String name, String description, Date startDate, int duration) {
         this.Id = Id;
         this.userGplusID = userGplusID;
         this.type = type;
+        this.name = name;
         this.description = description;
         this.startDate = startDate;
         this.duration = duration;
@@ -23,11 +24,11 @@ public class TaskBean {
     }
 
 
-    public long getId() {
+    public String getId() {
         return Id;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         Id = id;
     }
 
@@ -79,14 +80,23 @@ public class TaskBean {
         this.current = current;
     }
 
+    public String getName() {
+        return name;
+    }
 
-    @Id long Id;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Id String Id;
     @Index String userGplusID;
     int type;
+    String name;
     String description;
     Date startDate;
     int duration;
     int current;
+
 
     @Override
     public boolean equals(Object o) {
@@ -95,25 +105,27 @@ public class TaskBean {
 
         TaskBean taskBean = (TaskBean) o;
 
-        if (Id != taskBean.Id) return false;
-        if (current != taskBean.current) return false;
-        if (duration != taskBean.duration) return false;
         if (type != taskBean.type) return false;
+        if (duration != taskBean.duration) return false;
+        if (current != taskBean.current) return false;
+        if (Id != null ? !Id.equals(taskBean.Id) : taskBean.Id != null) return false;
+        if (userGplusID != null ? !userGplusID.equals(taskBean.userGplusID) : taskBean.userGplusID != null)
+            return false;
+        if (name != null ? !name.equals(taskBean.name) : taskBean.name != null) return false;
         if (description != null ? !description.equals(taskBean.description) : taskBean.description != null)
             return false;
-        if (!startDate.equals(taskBean.startDate)) return false;
-        if (!userGplusID.equals(taskBean.userGplusID)) return false;
+        return !(startDate != null ? !startDate.equals(taskBean.startDate) : taskBean.startDate != null);
 
-        return true;
     }
 
     @Override
     public int hashCode() {
-        int result = userGplusID.hashCode();
-        result = 31 * result + (int) (Id ^ (Id >>> 32));
+        int result = Id != null ? Id.hashCode() : 0;
+        result = 31 * result + (userGplusID != null ? userGplusID.hashCode() : 0);
         result = 31 * result + type;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (description != null ? description.hashCode() : 0);
-        result = 31 * result + startDate.hashCode();
+        result = 31 * result + (startDate != null ? startDate.hashCode() : 0);
         result = 31 * result + duration;
         result = 31 * result + current;
         return result;
@@ -122,9 +134,10 @@ public class TaskBean {
     @Override
     public String toString() {
         return "TaskBean{" +
-                "userGplusID='" + userGplusID + '\'' +
-                ", Id=" + Id +
+                "Id='" + Id + '\'' +
+                ", userGplusID='" + userGplusID + '\'' +
                 ", type=" + type +
+                ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", startDate=" + startDate +
                 ", duration=" + duration +

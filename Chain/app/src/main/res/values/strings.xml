@@ -15,15 +15,10 @@
     <string name="my_chains">My Chains</string>
 
     <string-array name="drawer_list">
-        <item>Item 1</item>
-        <item>Item 2</item>
-        <item>Item 3</item>
-        <item>Item 4</item>
-        <item>Item 5</item>
-        <item>Item 6</item>
-        <item>Item 7</item>
-        <item>Item 8</item>
-        <item>Item 9</item>
+        <item>My Chains</item>
+        <item>Friends\' Chains</item>
+        <item>Leaderboard</item>
+        <item>Settings</item>
     </string-array>
 
     <string name="title_activity_login">LoginActivity</string>
@@ -47,5 +42,17 @@
     <string name="configuration_error">Error: the value of WEB_CLIENT_ID or SERVER_BASE_URL is not  set correctly. This will cause errors when requesting a server auth code.</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_new_task">New Task</string>
+    <string name="label_type">Chain type</string>
+    <string name="label_name">Chain name</string>
+    <string name="label_desc">Description</string>
+    <string name="label_target">Target (days)</string>
+    <string name="pick_start_date">Pick start date</string>
+
+    <string-array name="type_array">
+        <item>Sports</item>
+        <item>Diet</item>
+        <item>Hobby</item>
+        <item>Work</item>
+    </string-array>
 
 </resources>

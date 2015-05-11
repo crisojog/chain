@@ -3,8 +3,8 @@ package com.farapile.android.chain;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v4.util.Pair;
-import android.widget.Toast;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.farapile.android.chain.backend.myApi.MyApi;
 import com.farapile.android.chain.backend.myApi.model.TaskBean;
@@ -14,6 +14,7 @@ import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.Callable;
 
 /**
@@ -64,29 +65,17 @@ public class ContentProvider {
         new EndpointsGetTasksAsyncTask().execute(p);
     }
 
-    private class EndpointsAsyncTask extends AsyncTask<Pair<Context, String>, Void, String> {
-
-        private Context context;
-
-        @Override
-        protected String doInBackground(Pair<Context, String>... params) {
-            init();
-
-            context = params[0].first;
-            String name = params[0].second;
-            try {
-                return myApiService.sayHi(name).execute().getName();
-            } catch (IOException e) {
-                return e.getMessage();
-            }
-        }
-
-
-        @Override
-        protected void onPostExecute(String result) {
-            Log.d("ContentProvider", result);
-            Toast.makeText(context, result, Toast.LENGTH_LONG).show();
-        }
+    public void addTask(UUID uuid, String gPlusId, int type, String name, String description, String date, int numDays, Context c) {
+        new EndpointsAddTaskAsyncTask().execute(new Pair<Task, Context>(
+                new Task(
+                        uuid.toString(),
+                        gPlusId,
+                        name,
+                        description,
+                        date,
+                        type,
+                        numDays),
+                c));
     }
 
     private class EndpointsGetTasksAsyncTask extends AsyncTask<Pair<String, Callable>, Void, List<TaskBean>> {
@@ -123,6 +112,59 @@ public class ContentProvider {
                     e.printStackTrace();
                 }
             }
+        }
+    }
+
+    private class EndpointsAddTaskAsyncTask extends AsyncTask<Pair<Task, Context>, Void, Integer> {
+
+        private Context context;
+        private Task task;
+
+        @Override
+        protected Integer doInBackground(Pair<Task, Context>... params) {
+            init();
+
+            context = params[0].second;
+            task = params[0].first;
+            try {
+                myApiService.createTask(
+                        task.id,
+                        task.gPlusId,
+                        task.type,
+                        task.name,
+                        task.description,
+                        task.date,
+                        task.numDays
+                        ).execute();
+            } catch (IOException e) {
+                e.printStackTrace();
+                return 1;
+            }
+            return 0;
+        }
+
+
+        @Override
+        protected void onPostExecute(Integer result) {
+            if (result == 0)
+                Toast.makeText(context, "New chain created", Toast.LENGTH_SHORT).show();
+            else
+                Toast.makeText(context, "Could not create chain", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    class Task {
+        public String id, gPlusId, description, date, name;
+        public int type, numDays;
+
+        public Task(String id, String gPlusId, String name, String description, String date, int type, int numDays) {
+            this.id = id;
+            this.gPlusId = gPlusId;
+            this.name = name;
+            this.description = description;
+            this.date = date;
+            this.type = type;
+            this.numDays = numDays;
         }
     }
 }

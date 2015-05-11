@@ -3,6 +3,6 @@
     android:shape="oval"
     android:dither="true">
     <solid
-        android:color="#faaf"
+        android:color="@color/accent"
         />
 </shape>

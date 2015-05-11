@@ -8,5 +8,6 @@
     <dimen name="round_button_diameter">40dp</dimen>
     <dimen name="add_button_margin">10dp</dimen>
     <dimen name="elevation_low">8dp</dimen>
+    <dimen name="explore_spinner_width">200dp</dimen>
 
 </resources>

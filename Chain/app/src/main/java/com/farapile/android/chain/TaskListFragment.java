@@ -1,10 +1,7 @@
 package com.farapile.android.chain;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.Pair;
 import android.support.v7.app.ActionBarActivity;
@@ -14,9 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import com.farapile.android.chain.backend.myApi.model.TaskBean;
-import com.farapile.android.chain.dummy.DummyContent;
 import com.google.android.gms.plus.Plus;
 import com.melnykov.fab.FloatingActionButton;
 
@@ -27,7 +24,8 @@ public class TaskListFragment extends Fragment {
     private TaskAdapter mTaskAdapter;
     private ListView mListView;
     private FloatingActionButton fab;
-    private ContentProvider cp;
+    private ContentProvider mContentProvider;
+    private ProgressBar mProgressBar;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -57,7 +55,8 @@ public class TaskListFragment extends Fragment {
             }
         });
 
-        cp = ContentProvider.getInstance();
+        mContentProvider = ContentProvider.getInstance();
+        mProgressBar = (ProgressBar) rootView.findViewById(R.id.progressBar);
         //new ContentProvider.EndpointsAsyncTask().execute(new Pair<Context, String>(getActivity(), "Manfred"));
         refreshTasks();
 
@@ -68,10 +67,13 @@ public class TaskListFragment extends Fragment {
 
     public void refreshTasks() {
         String user = GoogleApi.mGoogleApiClient != null ? Plus.PeopleApi.getCurrentPerson(GoogleApi.mGoogleApiClient).getUrl() : "asdf";
-        cp.getTasks(new Pair<String, Callable>(user, new Callable() {
+        mProgressBar.setVisibility(View.VISIBLE);
+
+        mContentProvider.getTasks(new Pair<String, Callable>(user, new Callable() {
             @Override
             public Integer call() throws Exception {
                 //mTaskAdapter.notifyDataSetChanged();
+                mProgressBar.setVisibility(View.GONE);
                 mTaskAdapter.clear();
                 mTaskAdapter.addAll(ContentProvider.taskList);
                 Log.d("TaskListFragment", "" + ContentProvider.taskList.size());
@@ -92,7 +94,7 @@ public class TaskListFragment extends Fragment {
         });
     }
     private void createNewTask() {
-        Intent intent = new Intent(getActivity(), NewTask.class);
+        Intent intent = new Intent(getActivity(), NewTaskActivity.class);
         startActivity(intent);
     }
 
