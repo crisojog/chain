@@ -64,21 +64,38 @@ public class TaskAdapter extends ArrayAdapter<TaskBean> {
                 t1.setText(p.getName());
             }
 
-            TextView soFar = (TextView) v.findViewById(R.id.taskSoFar);
-            TextView toGo = (TextView) v.findViewById(R.id.taskToGo);
-
-            soFar.setText("" + p.getCurrent());
-            toGo.setText("" + (p.getDuration() - p.getCurrent()));
-
             ImageView imgType = (ImageView) v.findViewById(R.id.taskIcon);
             imgType.setImageDrawable(mContext.getDrawable(drawables[p.getType()]));
 
             LinearLayout t = (LinearLayout) v.findViewById(R.id.taskIconLayout);
             ((GradientDrawable) t.getBackground()).setColor(mContext.getResources().getColor(colors[p.getType()]));
-            LinearLayout c1 = (LinearLayout) v.findViewById(R.id.taskSoFarLayout);
-            ((GradientDrawable) c1.getBackground()).setColor(mContext.getResources().getColor(colors[p.getType()]));
-            LinearLayout c2 = (LinearLayout) v.findViewById(R.id.taskToGoLayout);
-            ((GradientDrawable) c2.getBackground()).setColor(mContext.getResources().getColor(colors[p.getType()]));
+
+            LinearLayout ln = (LinearLayout) v.findViewById(R.id.taskNormalLayout);
+            LinearLayout lo = (LinearLayout) v.findViewById(R.id.taskOngoingLayout);
+            if (p.getDuration() != 0) {
+                ln.setVisibility(View.VISIBLE);
+                lo.setVisibility(View.GONE);
+
+                TextView soFar = (TextView) v.findViewById(R.id.taskSoFar);
+                TextView toGo = (TextView) v.findViewById(R.id.taskToGo);
+
+                soFar.setText("" + p.getCurrent());
+                toGo.setText("" + (p.getDuration() - p.getCurrent()));
+
+                LinearLayout c1 = (LinearLayout) v.findViewById(R.id.taskSoFarLayout);
+                ((GradientDrawable) c1.getBackground()).setColor(mContext.getResources().getColor(colors[p.getType()]));
+                LinearLayout c2 = (LinearLayout) v.findViewById(R.id.taskToGoLayout);
+                ((GradientDrawable) c2.getBackground()).setColor(mContext.getResources().getColor(colors[p.getType()]));
+            } else {
+                lo.setVisibility(View.VISIBLE);
+                ln.setVisibility(View.GONE);
+
+                TextView ongoingText = (TextView) v.findViewById(R.id.taskOngoingText);
+                ongoingText.setTextColor(mContext.getResources().getColor(colors[p.getType()]));
+
+                LinearLayout c1 = (LinearLayout) v.findViewById(R.id.taskOngoingIconLayout);
+                ((GradientDrawable) c1.getBackground()).setColor(mContext.getResources().getColor(colors[p.getType()]));
+            }
         }
 
         return v;

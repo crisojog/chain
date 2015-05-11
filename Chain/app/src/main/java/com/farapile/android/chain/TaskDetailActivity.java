@@ -60,30 +60,47 @@ public class TaskDetailActivity extends ActionBarActivity {
         descText.setText(description);
 
         TextView targetText = (TextView) findViewById(R.id.task_target);
-        Date sDate = new Date(startDate), eDate = new Date(startDate);
-        eDate.setDate(eDate.getDate() + duration);
-        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd yyyy");
-        targetText.setText(duration + ", from " + sdf.format(sDate) +
-                " to " + sdf.format(eDate));
+        TextView targetLabel = (TextView) findViewById(R.id.task_target_label);
+        if (duration != 0) {
+            Date sDate = new Date(startDate), eDate = new Date(startDate);
+            eDate.setDate(eDate.getDate() + duration);
+            SimpleDateFormat sdf = new SimpleDateFormat("MMM dd yyyy");
+            targetText.setText(duration + ", from " + sdf.format(sDate) +
+                    " to " + sdf.format(eDate));
+        } else {
+            targetLabel.setVisibility(View.GONE);
+            targetText.setVisibility(View.GONE);
+        }
 
         TextView progressText = (TextView) findViewById(R.id.task_progress);
-        progressText.setText(current + " so far, " + (duration - current) + " to go");
+        if (duration != 0) {
+            progressText.setText(current + " so far, " + (duration - current) + " to go");
+        } else {
+            progressText.setText("Ongoing activity");
+        }
 
         CircleProgress percentage = (CircleProgress) findViewById(R.id.circle_progress);
-        percentage.setProgress(current * 100 / duration);
-        percentage.setFinishedColor(colors[type]);
+        if (duration != 0) {
+            percentage.setProgress(current * 100 / duration);
+            percentage.setFinishedColor(colors[type]);
+        } else {
+            percentage.setVisibility(View.GONE);
+        }
 
-
-        final ContentProvider mContentProvider = ContentProvider.getInstance();
         final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                current++;
-                mContentProvider.updateCurrent(Id, TaskDetailActivity.this);
-                fab.setVisibility(View.GONE);
-            }
-        });
+        if (duration != 0) {
+            final ContentProvider mContentProvider = ContentProvider.getInstance();
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    current++;
+                    mContentProvider.updateCurrent(Id, TaskDetailActivity.this);
+                    fab.setVisibility(View.GONE);
+                }
+            });
+        } else {
+            fab.setVisibility(View.GONE);
+        }
     }
 
     @Override

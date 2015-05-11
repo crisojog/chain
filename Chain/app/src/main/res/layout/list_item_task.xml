@@ -23,7 +23,7 @@
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/taskIcon" />
+                android:id="@+id/taskIcon"/>
         </LinearLayout>
     </RelativeLayout>
     <LinearLayout
@@ -43,62 +43,98 @@
             android:text="TestItem"
             android:id="@+id/taskName" />
 
-        <LinearLayout
-            android:orientation="horizontal"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
+            android:layout_height="match_parent">
             <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:gravity="center"
-                android:background="@drawable/circle"
-                android:elevation="@dimen/elevation_low"
-                android:id="@+id/taskSoFarLayout"
-                android:layout_margin="@dimen/abc_button_padding_horizontal_material">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="4"
-                    android:textColor="@android:color/white"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:id="@+id/taskSoFar"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="so far"
-                    android:textColor="@android:color/white"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/taskNormalLayout"
+                android:visibility="visible">
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:gravity="center"
+                    android:background="@drawable/circle"
+                    android:elevation="@dimen/elevation_low"
+                    android:id="@+id/taskSoFarLayout"
+                    android:layout_margin="@dimen/abc_button_padding_horizontal_material">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="4"
+                        android:textColor="@android:color/white"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:id="@+id/taskSoFar"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="so far"
+                        android:textColor="@android:color/white"
+                        android:textAppearance="?android:attr/textAppearanceSmall" />
+                </LinearLayout>
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:gravity="center"
+                    android:background="@drawable/circle"
+                    android:elevation="@dimen/elevation_low"
+                    android:id="@+id/taskToGoLayout"
+                    android:layout_margin="@dimen/abc_button_padding_horizontal_material">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="80"
+                        android:textColor="@android:color/white"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:id="@+id/taskToGo" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="to go"
+                        android:textColor="@android:color/white"
+                        android:textAppearance="?android:attr/textAppearanceSmall" />
+                </LinearLayout>
             </LinearLayout>
             <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:gravity="center"
-                android:background="@drawable/circle"
-                android:elevation="@dimen/elevation_low"
-                android:id="@+id/taskToGoLayout"
-                android:layout_margin="@dimen/abc_button_padding_horizontal_material">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:id="@+id/taskOngoingLayout"
+                android:visibility="gone">
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:gravity="center"
+                    android:background="@drawable/circle"
+                    android:elevation="@dimen/elevation_low"
+                    android:id="@+id/taskOngoingIconLayout"
+                    android:layout_margin="@dimen/abc_button_padding_horizontal_material">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="∞"
+                        android:textColor="@android:color/white"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:id="@+id/taskOngoing" />
+                </LinearLayout>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="80"
-                    android:textColor="@android:color/white"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:id="@+id/taskToGo" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="to go"
-                    android:textColor="@android:color/white"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
+                    android:text="Ongoing"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:id="@+id/taskOngoingText" />
             </LinearLayout>
-        </LinearLayout>
+        </FrameLayout>
     </LinearLayout>
-
 </LinearLayout>
