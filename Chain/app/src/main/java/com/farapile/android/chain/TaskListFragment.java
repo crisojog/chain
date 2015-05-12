@@ -38,10 +38,11 @@ public class TaskListFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_task_list, container, false);
 
+        mContentProvider = ContentProvider.getInstance();
         mTaskAdapter = new TaskAdapter(
                 getActivity(),
                 R.layout.list_item_task,
-                ContentProvider.taskList);
+                mContentProvider.getTaskList());
 
         mListView = (ListView) rootView.findViewById(R.id.task_list);
         mListView.setAdapter(mTaskAdapter);
@@ -63,7 +64,6 @@ public class TaskListFragment extends Fragment {
             }
         });
 
-        mContentProvider = ContentProvider.getInstance();
         mProgressBar = (ProgressBar) rootView.findViewById(R.id.progressBar);
         //new ContentProvider.EndpointsAsyncTask().execute(new Pair<Context, String>(getActivity(), "Manfred"));
         refreshTasks();
@@ -83,8 +83,8 @@ public class TaskListFragment extends Fragment {
                 //mTaskAdapter.notifyDataSetChanged();
                 mProgressBar.setVisibility(View.GONE);
                 mTaskAdapter.clear();
-                mTaskAdapter.addAll(ContentProvider.taskList);
-                Log.d("TaskListFragment", "" + ContentProvider.taskList.size());
+                mTaskAdapter.addAll(mContentProvider.getTaskList());
+                Log.d("TaskListFragment", "" + mContentProvider.getTaskList().size());
                 return 0;
             }
         }));

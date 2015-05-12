@@ -51,11 +51,22 @@ public class MainActivity extends ActionBarActivity {
         //getProfileInformation();
 
         if (savedInstanceState == null) {
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction()
-                    .replace(R.id.container, new TaskListFragment())
-                    .commit();
+            startTaskListFragment(null);
         }
+    }
+
+    public void startFriendListFragment() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.container, new FriendListFragment())
+                .commit();
+    }
+
+    public void startTaskListFragment(String id) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.container, new TaskListFragment())
+                .commit();
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -146,7 +157,12 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 int editedPosition = position+1;
-                Toast.makeText(MainActivity.this, "You selected item " + editedPosition, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(MainActivity.this, "You selected item " + editedPosition, Toast.LENGTH_SHORT).show();
+                if (position == 0) {
+                    startTaskListFragment(null);
+                } else {
+                    startFriendListFragment();
+                }
                 mDrawerLayout.closeDrawer(mDrawerListLayout);
             }
         });
