@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import com.farapile.android.chain.backend.myApi.MyApi;
 import com.farapile.android.chain.backend.myApi.model.TaskBean;
+import com.farapile.android.chain.backend.myApi.model.UserBean;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 
@@ -23,7 +24,26 @@ import java.util.concurrent.Callable;
 public class ContentProvider {
     private static MyApi myApiService = null;
     private static ContentProvider instance = null;
-    public static ArrayList<TaskBean> taskList = new ArrayList<TaskBean>();
+
+    public ArrayList<TaskBean> getTaskList() {
+        return taskList;
+    }
+
+    public void setTaskList(ArrayList<TaskBean> taskList) {
+        this.taskList = taskList;
+    }
+
+    private ArrayList<TaskBean> taskList = new ArrayList<TaskBean>();
+
+    public ArrayList<UserBean> getFriendList() {
+        return friendList;
+    }
+
+    public void setFriendList(ArrayList<UserBean> friendList) {
+        this.friendList = friendList;
+    }
+
+    private ArrayList<UserBean> friendList = new ArrayList<UserBean>();
 
     public ContentProvider() {
         init();

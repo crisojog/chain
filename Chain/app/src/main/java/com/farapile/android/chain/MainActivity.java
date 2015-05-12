@@ -48,11 +48,22 @@ public class MainActivity extends BaseActivity {
         initNavigationDrawer();
 
         if (savedInstanceState == null) {
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction()
-                    .replace(R.id.container, new TaskListFragment())
-                    .commit();
+            startTaskListFragment(null);
         }
+    }
+
+    public void startFriendListFragment() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.container, new FriendListFragment())
+                .commit();
+    }
+
+    public void startTaskListFragment(String id) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.container, new TaskListFragment())
+                .commit();
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -149,8 +160,15 @@ public class MainActivity extends BaseActivity {
         mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                int editedPosition = position + 1;
+
+                int editedPosition = position+1;
                 //Toast.makeText(MainActivity.this, "You selected item " + editedPosition, Toast.LENGTH_SHORT).show();
+                if (position == 0) {
+                    startTaskListFragment(null);
+                } else {
+                    startFriendListFragment();
+                }
+
                 mDrawerLayout.closeDrawer(mDrawerListLayout);
             }
         });
