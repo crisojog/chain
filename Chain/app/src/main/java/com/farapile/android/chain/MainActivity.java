@@ -54,10 +54,12 @@ public class MainActivity extends BaseActivity implements
         mContentProvider = ContentProvider.getInstance();
     }
 
-    public void startFriendListFragment() {
+    public void startFriendListFragment(Boolean isLeaderBoard) {
         FragmentManager fragmentManager = getSupportFragmentManager();
+        FriendListFragment flf = new FriendListFragment();
+        flf.setIsLeaderBoard(isLeaderBoard);
         fragmentManager.beginTransaction()
-                .replace(R.id.container, new FriendListFragment())
+                .replace(R.id.container, flf)
                 .commit();
     }
 
@@ -148,10 +150,14 @@ public class MainActivity extends BaseActivity implements
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (position == 0) {
                     startTaskListFragment(gPlusId, null, false);
-                } else {
+                } else if (position == 1) {
                     if (mContentProvider.getFriendList() == null)
                         return;
-                    startFriendListFragment();
+                    startFriendListFragment(false);
+                } else if (position == 2) {
+                    if (mContentProvider.getFriendList() == null)
+                        return;
+                    startFriendListFragment(true);
                 }
 
                 mDrawerLayout.closeDrawer(mDrawerListLayout);
