@@ -9,8 +9,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.farapile.android.chain.backend.myApi.model.UserBean;
+import com.google.common.collect.HashBasedTable;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 
 /**
  * Created by Cristi on 5/12/2015.
@@ -46,8 +48,12 @@ public class FriendAdapter extends ArrayAdapter<UserBean> {
                 name.setText(p.getName());
             }
 
+
+            ContentProvider cp = ContentProvider.getInstance();
+            Hashtable<String, String> m =  cp.getImageMap();
             ImageView imgProfile = (ImageView) v.findViewById(R.id.friendIcon);
-            //TODO setImgProfile
+            if (m.containsKey(p.getGplusID()))
+                new ContentProvider.LoadProfileImage(imgProfile).execute(m.get(p.getGplusID()));
 
             TextView tasks = (TextView) v.findViewById(R.id.numTasks);
             tasks.setText(p.getNumTasks() + "");
