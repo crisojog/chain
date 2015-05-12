@@ -10,8 +10,6 @@ import android.widget.ListView;
 
 import com.farapile.android.chain.backend.myApi.model.UserBean;
 
-import java.util.ArrayList;
-
 /**
  * Created by Cristi on 5/12/2015.
  */
@@ -28,12 +26,6 @@ public class FriendListFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_friend_list, container, false);
 
-        UserBean x = new UserBean();
-        x.setGplusID("asdf2");
-        x.setName("gigi");
-        x.setNumTasks(0);
-        ArrayList<UserBean> friends = new ArrayList<UserBean>();
-        friends.add(x);
         mContentProvider = ContentProvider.getInstance();
         mFriendAdapter = new FriendAdapter(
                 getActivity(),
@@ -48,7 +40,7 @@ public class FriendListFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 UserBean user = mFriendAdapter.getItem(position);
 
-                ((MainActivity)getActivity()).startTaskListFragment(user.getGplusID(), true);
+                ((MainActivity)getActivity()).startTaskListFragment(user.getGplusID(), user.getName(), true);
             }
         });
 

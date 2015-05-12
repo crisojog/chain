@@ -61,10 +61,12 @@ public class MainActivity extends BaseActivity implements
                 .commit();
     }
 
-    public void startTaskListFragment(String gPlusId, boolean isFriend) {
+    public void startTaskListFragment(String gPlusId, String name, boolean isFriend) {
+        Log.d(TAG, "startTaskListFragment(" + gPlusId + ", " + isFriend + ")");
         FragmentManager fragmentManager = getSupportFragmentManager();
         Bundle bundle = new Bundle();
         bundle.putString("gPlusId", gPlusId);
+        bundle.putString("name", name);
         bundle.putBoolean("isFriend", isFriend);
         TaskListFragment tlf = new TaskListFragment();
         tlf.setArguments(bundle);
@@ -85,7 +87,7 @@ public class MainActivity extends BaseActivity implements
         getProfileInformation();
         Plus.PeopleApi.loadVisible(mGoogleApiClient, null)
                 .setResultCallback(this);
-        startTaskListFragment(gPlusId, false);
+        startTaskListFragment(gPlusId, null, false);
     }
 
     private void getProfileInformation() {
@@ -145,7 +147,7 @@ public class MainActivity extends BaseActivity implements
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (position == 0) {
-                    startTaskListFragment(gPlusId, false);
+                    startTaskListFragment(gPlusId, null, false);
                 } else {
                     if (mContentProvider.getFriendList() == null)
                         return;
@@ -202,8 +204,9 @@ public class MainActivity extends BaseActivity implements
                 }
                 return true;
             }
-            case R.id.action_example: {
-                Toast.makeText(this, "Example action.", Toast.LENGTH_SHORT).show();
+            case R.id.action_logout: {
+                //Toast.makeText(this, "Example action.", Toast.LENGTH_SHORT).show();
+
                 return true;
             }
             default:

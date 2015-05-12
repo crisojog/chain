@@ -49,6 +49,7 @@
     <string name="pick_start_date">Pick start date</string>
     <string name="label_progress">Progress</string>
     <string name="label_endorsements">Endorsements</string>
+    <string name="action_logout">Logout</string>
 
     <string-array name="type_array">
         <item>Sports</item>

@@ -33,6 +33,15 @@ public class ContentProvider {
     private Hashtable<String, String> mImageMap;
     private ArrayList<UserBean> friendList = null;
     private ArrayList<TaskBean> taskList = new ArrayList<TaskBean>();
+    private UserBean myUser = null;
+
+    public UserBean getMyUser() {
+        return myUser;
+    }
+
+    public void setMyUser(UserBean myUser) {
+        this.myUser = myUser;
+    }
 
     public ArrayList<TaskBean> getTaskList() {
         return taskList;
@@ -50,6 +59,23 @@ public class ContentProvider {
         this.friendList = friendList;
     }
 
+    public ArrayList<String> getCirclesList() {
+        return mCirclesList;
+    }
+
+    public Hashtable<String, String> getImageMap() {
+        return mImageMap;
+    }
+
+    public void setCirclesList(ArrayList<String> circlesList, Callable c) {
+        mCirclesList = circlesList;
+        if (friendList != null) friendList.clear();
+        filterFriends(mCirclesList, c);
+    }
+
+    public void setImageMap(Hashtable<String,String> imageMap) {
+        mImageMap = imageMap;
+    }
 
     public ContentProvider() {
         init();
@@ -146,23 +172,6 @@ public class ContentProvider {
         ));
     }
 
-    public ArrayList<String> getCirclesList() {
-        return mCirclesList;
-    }
-
-    public Hashtable<String, String> getImageMap() {
-        return mImageMap;
-    }
-
-    public void setCirclesList(ArrayList<String> circlesList, Callable c) {
-        mCirclesList = circlesList;
-
-        filterFriends(mCirclesList, c);
-    }
-
-    public void setImageMap(Hashtable<String,String> imageMap) {
-        mImageMap = imageMap;
-    }
 
     public void filterFriends(ArrayList<String> circlesList, Callable c) {
         for(String friend : circlesList) {
@@ -277,29 +286,28 @@ public class ContentProvider {
         }
     }
 
-    private class EndpointsLogUserAsyncTask extends AsyncTask<Pair<String, String>, Void, Integer> {
+    private class EndpointsLogUserAsyncTask extends AsyncTask<Pair<String, String>, Void, UserBean> {
 
         private String gPlusId, name;
 
         @Override
-        protected Integer doInBackground(Pair<String, String>... params) {
+        protected UserBean doInBackground(Pair<String, String>... params) {
             init();
 
             gPlusId = params[0].first;
             name = params[0].second;
 
             try {
-                myApiService.logUser(gPlusId, name).execute();
+                return myApiService.logUser(gPlusId, name).execute();
             } catch (IOException e) {
-                return 1;
+                return null;
             }
-            return 0;
         }
 
 
         @Override
-        protected void onPostExecute(Integer result) {
-
+        protected void onPostExecute(UserBean result) {
+            myUser = result;
         }
     }
 

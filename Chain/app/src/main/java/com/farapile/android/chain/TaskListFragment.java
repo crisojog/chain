@@ -16,6 +16,7 @@ import android.widget.ProgressBar;
 import com.farapile.android.chain.backend.myApi.model.TaskBean;
 import com.melnykov.fab.FloatingActionButton;
 
+import java.util.ArrayList;
 import java.util.concurrent.Callable;
 
 public class TaskListFragment extends Fragment {
@@ -26,7 +27,7 @@ public class TaskListFragment extends Fragment {
     private ContentProvider mContentProvider;
     private ProgressBar mProgressBar;
 
-    private String gPlusId;
+    private String gPlusId, name;
     private boolean isFriend;
 
     /**
@@ -43,14 +44,21 @@ public class TaskListFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_task_list, container, false);
 
         gPlusId = getArguments().getString("gPlusId");
+        name = getArguments().getString("name");
         isFriend = getArguments().getBoolean("isFriend");
 
         mContentProvider = ContentProvider.getInstance();
-        mTaskAdapter = new TaskAdapter(
-                getActivity(),
-                R.layout.list_item_task,
-                mContentProvider.getTaskList());
-
+        if (isFriend) {
+            mTaskAdapter = new TaskAdapter(
+                    getActivity(),
+                    R.layout.list_item_task,
+                    new ArrayList<TaskBean>());
+        } else {
+            mTaskAdapter = new TaskAdapter(
+                    getActivity(),
+                    R.layout.list_item_task,
+                    mContentProvider.getTaskList());
+        }
         mListView = (ListView) rootView.findViewById(R.id.task_list);
         mListView.setAdapter(mTaskAdapter);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -72,10 +80,13 @@ public class TaskListFragment extends Fragment {
         });
 
         mProgressBar = (ProgressBar) rootView.findViewById(R.id.progressBar);
-        //new ContentProvider.EndpointsAsyncTask().execute(new Pair<Context, String>(getActivity(), "Manfred"));
-        refreshTasks();
+        //if (!isFriend && (mContentProvider.getTaskList() == null || mContentProvider.getTaskList().size() == 0))
+            refreshTasks();
 
-        ((ActionBarActivity) getActivity()).getSupportActionBar().setTitle(R.string.my_chains);
+        if (isFriend)
+            ((ActionBarActivity) getActivity()).getSupportActionBar().setTitle(name + "\'s chains");
+        else
+            ((ActionBarActivity) getActivity()).getSupportActionBar().setTitle(R.string.my_chains);
 
         return rootView;
     }
@@ -90,6 +101,7 @@ public class TaskListFragment extends Fragment {
                 mProgressBar.setVisibility(View.GONE);
                 mTaskAdapter.clear();
                 mTaskAdapter.addAll(mContentProvider.getTaskList());
+                mTaskAdapter.notifyDataSetChanged();
                 Log.d("TaskListFragment", "" + mContentProvider.getTaskList().size());
                 return 0;
             }

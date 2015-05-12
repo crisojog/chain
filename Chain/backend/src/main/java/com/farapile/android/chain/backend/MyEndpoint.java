@@ -83,6 +83,10 @@ public class MyEndpoint {
 
         TaskBean newTask = new TaskBean(Id, userGplusID, type, name, description, startDate, duration);
         ofy().save().entities(newTask).now();
+
+        UserBean user = findUser(userGplusID);
+        user.incNumTasks();
+        ofy().save().entity(user).now();
         return newTask;
     }
 
