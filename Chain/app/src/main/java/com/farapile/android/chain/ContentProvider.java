@@ -1,9 +1,12 @@
 package com.farapile.android.chain;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.support.v4.util.Pair;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.farapile.android.chain.backend.myApi.MyApi;
@@ -13,7 +16,9 @@ import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Callable;
@@ -24,6 +29,10 @@ import java.util.concurrent.Callable;
 public class ContentProvider {
     private static MyApi myApiService = null;
     private static ContentProvider instance = null;
+    private ArrayList<String> mCirclesList = new ArrayList<>();
+    private Hashtable<String, String> mImageMap;
+    private ArrayList<UserBean> friendList = null;
+    private ArrayList<TaskBean> taskList = new ArrayList<TaskBean>();
 
     public ArrayList<TaskBean> getTaskList() {
         return taskList;
@@ -33,8 +42,6 @@ public class ContentProvider {
         this.taskList = taskList;
     }
 
-    private ArrayList<TaskBean> taskList = new ArrayList<TaskBean>();
-
     public ArrayList<UserBean> getFriendList() {
         return friendList;
     }
@@ -43,7 +50,6 @@ public class ContentProvider {
         this.friendList = friendList;
     }
 
-    private ArrayList<UserBean> friendList = new ArrayList<UserBean>();
 
     public ContentProvider() {
         init();
@@ -54,6 +60,34 @@ public class ContentProvider {
             instance = new ContentProvider();
         }
         return instance;
+    }
+
+    /**
+     * Background Async task to load user profile picture from url
+     * */
+    public static class LoadProfileImage extends AsyncTask<String, Void, Bitmap> {
+        ImageView bmImage;
+
+        public LoadProfileImage(ImageView bmImage) {
+            this.bmImage = bmImage;
+        }
+
+        protected Bitmap doInBackground(String... urls) {
+            String urldisplay = urls[0];
+            Bitmap mIcon11 = null;
+            try {
+                InputStream in = new java.net.URL(urldisplay).openStream();
+                mIcon11 = BitmapFactory.decodeStream(in);
+            } catch (Exception e) {
+                Log.e("Error", e.getMessage());
+                e.printStackTrace();
+            }
+            return mIcon11;
+        }
+
+        protected void onPostExecute(Bitmap result) {
+            bmImage.setImageBitmap(result);
+        }
     }
 
     public static void init() {
@@ -110,6 +144,30 @@ public class ContentProvider {
                 gPlusId,
                 name
         ));
+    }
+
+    public ArrayList<String> getCirclesList() {
+        return mCirclesList;
+    }
+
+    public Hashtable<String, String> getImageMap() {
+        return mImageMap;
+    }
+
+    public void setCirclesList(ArrayList<String> circlesList, Callable c) {
+        mCirclesList = circlesList;
+
+        filterFriends(mCirclesList, c);
+    }
+
+    public void setImageMap(Hashtable<String,String> imageMap) {
+        mImageMap = imageMap;
+    }
+
+    public void filterFriends(ArrayList<String> circlesList, Callable c) {
+        for(String friend : circlesList) {
+            new EndpointsFilterFriendsAsyncTask().execute(friend);
+        }
     }
 
     private class EndpointsGetTasksAsyncTask extends AsyncTask<Pair<String, Callable>, Void, List<TaskBean>> {
@@ -245,6 +303,46 @@ public class ContentProvider {
         }
     }
 
+    private class EndpointsFilterFriendsAsyncTask extends AsyncTask<String, Void, UserBean> {
+
+        private String friendsList;
+
+        @Override
+        protected UserBean doInBackground(String... params) {
+            init();
+
+            friendsList = params[0];
+
+            try {
+                return myApiService.findUser(friendsList).execute();
+            } catch (IOException e) {
+                e.printStackTrace();
+                /*
+                UserBean u = new UserBean();
+                u.setGplusID("asdf");
+                u.setName("asdf");
+                u.setNumTasks(0);
+                ArrayList<UserBean> rez = new ArrayList<>();
+                rez.add(u);
+                return rez;
+                */
+                return null;
+            }
+        }
+
+
+        @Override
+        protected void onPostExecute(UserBean result) {
+            if (result != null) {
+                ContentProvider mContentProvider = ContentProvider.getInstance();
+                ArrayList<UserBean> friendList = mContentProvider.getFriendList();
+                if (friendList == null) friendList = new ArrayList<>();
+                friendList.add(result);
+                mContentProvider.setFriendList(friendList);
+                Log.d("asdf", "" + friendList.size());
+            }
+        }
+    }
 
     class Task {
         public String id, gPlusId, description, name;

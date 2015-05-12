@@ -15,6 +15,7 @@ import com.google.appengine.api.datastore.QueryResultIterator;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Named;
 
@@ -57,8 +58,8 @@ public class MyEndpoint {
     }
 
     @ApiMethod(name = "filterFriends")
-    public ArrayList<UserBean> filterFriends(@Named("friends") ArrayList<String> friends) {
-        ArrayList<UserBean> friendsInDB = new ArrayList<>();
+    public List<UserBean> filterFriends(@Named("friends") List<String> friends) {
+        List<UserBean> friendsInDB = new ArrayList<>();
         for(String id : friends) {
             UserBean friend = findUser(id);
             if (friend != null) {

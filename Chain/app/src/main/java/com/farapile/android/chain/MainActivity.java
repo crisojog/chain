@@ -1,9 +1,6 @@
 package com.farapile.android.chain;
 
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
@@ -28,8 +25,9 @@ import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
 import com.google.android.gms.plus.model.people.PersonBuffer;
 
-import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.concurrent.Callable;
 
 
 public class MainActivity extends BaseActivity implements
@@ -46,7 +44,6 @@ public class MainActivity extends BaseActivity implements
     private static final int PROFILE_PIC_SIZE = 80;
 
     private String gPlusId = null;
-    private ArrayList<String> mCirclesList, mImageList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,7 +122,7 @@ public class MainActivity extends BaseActivity implements
                         personPhotoUrl.length() - 2)
                         + PROFILE_PIC_SIZE;
 
-                new LoadProfileImage(imgProfilePic).execute(personPhotoUrl);
+                new ContentProvider.LoadProfileImage(imgProfilePic).execute(personPhotoUrl);
 
             } else {
                 Toast.makeText(getApplicationContext(),
@@ -136,33 +133,6 @@ public class MainActivity extends BaseActivity implements
         }
     }
 
-    /**
-     * Background Async task to load user profile picture from url
-     * */
-    private class LoadProfileImage extends AsyncTask<String, Void, Bitmap> {
-        ImageView bmImage;
-
-        public LoadProfileImage(ImageView bmImage) {
-            this.bmImage = bmImage;
-        }
-
-        protected Bitmap doInBackground(String... urls) {
-            String urldisplay = urls[0];
-            Bitmap mIcon11 = null;
-            try {
-                InputStream in = new java.net.URL(urldisplay).openStream();
-                mIcon11 = BitmapFactory.decodeStream(in);
-            } catch (Exception e) {
-                Log.e("Error", e.getMessage());
-                e.printStackTrace();
-            }
-            return mIcon11;
-        }
-
-        protected void onPostExecute(Bitmap result) {
-            bmImage.setImageBitmap(result);
-        }
-    }
 
     private void initNavigationDrawer() {
 
@@ -174,12 +144,11 @@ public class MainActivity extends BaseActivity implements
         mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                int editedPosition = position + 1;
-                //Toast.makeText(MainActivity.this, "You selected item " + editedPosition, Toast.LENGTH_SHORT).show();
                 if (position == 0) {
                     startTaskListFragment(gPlusId, false);
                 } else {
+                    if (mContentProvider.getFriendList() == null)
+                        return;
                     startFriendListFragment();
                 }
 
@@ -270,18 +239,30 @@ public class MainActivity extends BaseActivity implements
     @Override
     public void onResult(People.LoadPeopleResult peopleData) {
         if (peopleData.getStatus().getStatusCode() == CommonStatusCodes.SUCCESS) {
-            mCirclesList.clear();
-            mImageList.clear();
+            ArrayList<String> mCirclesList = new ArrayList<>();
+            Hashtable<String, String > mImageMap = new Hashtable<>();
             PersonBuffer personBuffer = peopleData.getPersonBuffer();
             try {
                 int count = personBuffer.getCount();
-                personBuffer.get(0).getImage();
+                //personBuffer.get(0).getImage();
                 for (int i = 0; i < count; i++) {
-                    mCirclesList.add(personBuffer.get(i).getId());
-                    mImageList.add(personBuffer.get(i).getImage().getUrl());
+                    Person p = personBuffer.get(i);
+                    String url = p.getImage().getUrl();
+
+                    Log.d(TAG, p.getId() + " " + p.getDisplayName() + " " + url);
+                    mCirclesList.add(p.getId());
+                    if (url != null)
+                        mImageMap.put(p.getId(), url);
                 }
             } finally {
                 personBuffer.close();
+                mContentProvider.setCirclesList(mCirclesList, new Callable() {
+                    @Override
+                    public Object call() throws Exception {
+                        return null;
+                    }
+                });
+                mContentProvider.setImageMap(mImageMap);
             }
 
             //mCirclesAdapter.notifyDataSetChanged();

@@ -38,7 +38,7 @@ public class FriendListFragment extends Fragment {
         mFriendAdapter = new FriendAdapter(
                 getActivity(),
                 R.layout.list_item_friend,
-                friends //mContentProvider.getFriendList()
+                mContentProvider.getFriendList()
         );
 
         mListView = (ListView) rootView.findViewById(R.id.friendList);
