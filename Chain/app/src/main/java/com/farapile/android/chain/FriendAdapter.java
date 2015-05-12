@@ -20,15 +20,17 @@ import java.util.Hashtable;
 
 public class FriendAdapter extends ArrayAdapter<UserBean> {
     private Context mContext;
+    private Boolean isLeaderBoard;
 
     public FriendAdapter(Context context, int textViewResourceId) {
         super(context, textViewResourceId);
         mContext = context;
     }
 
-    public FriendAdapter(Context context, int resource, ArrayList<UserBean> items) {
+    public FriendAdapter(Context context, int resource, ArrayList<UserBean> items, Boolean isLeaderBoard) {
         super(context, resource, items);
         mContext = context;
+        this.isLeaderBoard = isLeaderBoard;
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -56,7 +58,10 @@ public class FriendAdapter extends ArrayAdapter<UserBean> {
                 new ContentProvider.LoadProfileImage(imgProfile).execute(m.get(p.getGplusID()));
 
             TextView tasks = (TextView) v.findViewById(R.id.numTasks);
-            tasks.setText(p.getNumTasks() + "");
+            if (!isLeaderBoard)
+                tasks.setText(p.getNumTasks() + "");
+            else
+                tasks.setText(p.getEndorsement() + "");
         }
 
         return v;

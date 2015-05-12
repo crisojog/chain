@@ -10,12 +10,16 @@ import com.googlecode.objectify.annotation.Id;
 @Entity
 public class UserBean {
 
-    public UserBean() {}
+    public UserBean() {
+        this.numTasks = 0;
+        this.endorsement = 0;
+    }
 
     public UserBean(String gplusID, String name) {
         this.gplusID = gplusID;
         this.name = name;
         this.numTasks = 0;
+        this.endorsement = 0;
     }
 
     public String getGplusID() {
@@ -46,6 +50,16 @@ public class UserBean {
         numTasks++;
     }
 
+    public Integer getEndorsement() {
+        return endorsement;
+    }
+
+    public void setEndorsement(Integer endorsement) {
+        this.endorsement = endorsement;
+    }
+
+    public void incEndorsement() { this.endorsement++; }
+
     public void decNumTasks() {
         numTasks--;
         if (numTasks < 0) numTasks = 0;
@@ -54,4 +68,5 @@ public class UserBean {
     @Id String gplusID;
     String name;
     Integer numTasks;
+    Integer endorsement;
 }
