@@ -7,7 +7,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.util.Log;
 import android.view.Menu;
@@ -28,7 +27,7 @@ import com.google.android.gms.plus.model.people.Person;
 import java.io.InputStream;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends BaseActivity {
 
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
@@ -48,8 +47,6 @@ public class MainActivity extends ActionBarActivity {
 
         initNavigationDrawer();
 
-        //getProfileInformation();
-
         if (savedInstanceState == null) {
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction()
@@ -64,22 +61,29 @@ public class MainActivity extends ActionBarActivity {
         return true;
     }
 
+    @Override
+    public void onConnected(Bundle bundle) {
+        super.onConnected(bundle);
+        getProfileInformation();
+    }
+
     private void getProfileInformation() {
         Log.d(TAG, "getProfileInformation()");
+
         try {
-            if(!GoogleApi.mGoogleApiClient.isConnected()) {
-                GoogleApi.mGoogleApiClient.connect(); //dumbest hack ever
-            }
-            if (Plus.PeopleApi.getCurrentPerson(GoogleApi.mGoogleApiClient) != null) {
+            if (Plus.PeopleApi.getCurrentPerson(mGoogleApiClient) != null) {
                 Person currentPerson = Plus.PeopleApi
-                        .getCurrentPerson(GoogleApi.mGoogleApiClient);
+                        .getCurrentPerson(mGoogleApiClient);
+
                 String personName = currentPerson.getDisplayName();
                 String personPhotoUrl = currentPerson.getImage().getUrl();
                 String personGooglePlusProfile = currentPerson.getUrl();
-                String email = Plus.AccountApi.getAccountName(GoogleApi.mGoogleApiClient);
+                String email = Plus.AccountApi.getAccountName(mGoogleApiClient);
 
-                Log.e(TAG, "Name: " + personName + ", plusProfile: "
-                        + personGooglePlusProfile + ", email: " + email
+                Log.e(TAG, "Id:" + currentPerson.getId()
+                        + ", Name: " + personName
+                        + ", plusProfile: " + personGooglePlusProfile
+                        + ", email: " + email
                         + ", Image: " + personPhotoUrl);
 
                 TextView txtName = (TextView) findViewById(R.id.text_username);
@@ -145,12 +149,12 @@ public class MainActivity extends ActionBarActivity {
         mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                int editedPosition = position+1;
-                Toast.makeText(MainActivity.this, "You selected item " + editedPosition, Toast.LENGTH_SHORT).show();
+                int editedPosition = position + 1;
+                //Toast.makeText(MainActivity.this, "You selected item " + editedPosition, Toast.LENGTH_SHORT).show();
                 mDrawerLayout.closeDrawer(mDrawerListLayout);
             }
         });
-
+        
         mDrawerToggle = new ActionBarDrawerToggle(this,
                 mDrawerLayout,
                 null,

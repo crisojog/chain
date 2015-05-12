@@ -7,17 +7,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
@@ -41,43 +35,37 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class LoginActivity extends FragmentActivity implements
-        ConnectionCallbacks, OnConnectionFailedListener, View.OnClickListener,
+
+/**
+ * Created by crisojog on 12/05/15.
+ */
+public class BaseActivity extends ActionBarActivity implements
+        ConnectionCallbacks, OnConnectionFailedListener,
         GoogleApiClient.ServerAuthCodeCallbacks {
 
-    private static final int STATE_DEFAULT = 0;
-    private static final int STATE_SIGN_IN = 1;
-    private static final int STATE_IN_PROGRESS = 2;
+    protected static final int STATE_DEFAULT = 0;
+    protected static final int STATE_SIGN_IN = 1;
+    protected static final int STATE_IN_PROGRESS = 2;
 
-    private static final int RC_SIGN_IN = 0;
+    protected static final int RC_SIGN_IN = 0;
 
-    private static final String TAG = "LOGIN";
-    private static final String SAVED_PROGRESS = "sign_in_progress";
-    private static final String WEB_CLIENT_ID = "WEB_CLIENT_ID";
-    private static final String SERVER_BASE_URL = "SERVER_BASE_URL";
-    private static final String EXCHANGE_TOKEN_URL = SERVER_BASE_URL + "/exchangetoken";
-    private static final String SELECT_SCOPES_URL = SERVER_BASE_URL + "/selectscopes";
+    protected static final String TAG = "BASE";
+    protected static final String SAVED_PROGRESS = "sign_in_progress";
+    protected static final String WEB_CLIENT_ID = "WEB_CLIENT_ID";
+    protected static final String SERVER_BASE_URL = "SERVER_BASE_URL";
+    protected static final String EXCHANGE_TOKEN_URL = SERVER_BASE_URL + "/exchangetoken";
+    protected static final String SELECT_SCOPES_URL = SERVER_BASE_URL + "/selectscopes";
 
-    private int mSignInProgress;
-    private PendingIntent mSignInIntent;
-    private int mSignInError;
-    private boolean mServerHasToken = true;
-
-    private SignInButton mSignInButton;
-    private Button mSignOutButton;
-    private GoogleApiClient mGoogleApiClient;
+    protected int mSignInProgress;
+    protected PendingIntent mSignInIntent;
+    protected int mSignInError;
+    protected boolean mServerHasToken = true;
+    protected GoogleApiClient mGoogleApiClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
-        mSignInButton = (SignInButton) findViewById(R.id.sign_in_button);
-        mSignOutButton = (Button) findViewById(R.id.sign_out_button);
-
-        // Button listeners
-        mSignInButton.setOnClickListener(this);
-        mSignOutButton.setOnClickListener(this);
 
         mGoogleApiClient = buildGoogleApiClient();
     }
@@ -115,47 +103,7 @@ public class LoginActivity extends FragmentActivity implements
         super.onSaveInstanceState(outState);
         outState.putInt(SAVED_PROGRESS, mSignInProgress);
     }
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_login, menu);
-        return true;
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onClick(View v) {
-        if (!mGoogleApiClient.isConnecting()) {
-            switch (v.getId()) {
-                case R.id.sign_in_button:
-                    mSignInProgress = STATE_SIGN_IN;
-                    mGoogleApiClient.connect();
-                    break;
-                case R.id.sign_out_button:
-                    if (mGoogleApiClient.isConnected()) {
-                        Log.d(TAG, "sign out called");
-                        Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
-                        mGoogleApiClient.disconnect();
-                    }
-                    onSignedOut();
-                    break;
-            }
-        }
-    }
 
     @Override
     public CheckResult onCheckServerAuthorization(String s, Set<Scope> scopes) {
@@ -214,7 +162,7 @@ public class LoginActivity extends FragmentActivity implements
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(LoginActivity.this, responseBody, Toast.LENGTH_LONG).show();
+                    //Toast.makeText(LoginActivity.this, responseBody, Toast.LENGTH_LONG).show();
                 }
             });
             return (statusCode == 200);
@@ -230,9 +178,6 @@ public class LoginActivity extends FragmentActivity implements
     @Override
     public void onConnected(Bundle bundle) {
         Log.i(TAG, "onConnected");
-        // Update the user interface to reflect that the user is signed in.
-        mSignInButton.setEnabled(false);
-        mSignOutButton.setEnabled(true);
 /*
         // Retrieve some profile information to personalize our app for the user.
         Person currentUser = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
@@ -243,13 +188,7 @@ public class LoginActivity extends FragmentActivity implements
         // Indicate that the sign in process is complete.
         mSignInProgress = STATE_DEFAULT;
 
-        startMainActivity();
-    }
 
-    private void startMainActivity() {
-        GoogleApi.mGoogleApiClient = mGoogleApiClient;
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivityForResult(intent, 0);
     }
 
     @Override
@@ -276,10 +215,8 @@ public class LoginActivity extends FragmentActivity implements
         onSignedOut();
     }
 
-    private void onSignedOut() {
+    protected void onSignedOut() {
         Log.d(TAG, "onSignedOut");
-        mSignInButton.setEnabled(true);
-        mSignOutButton.setEnabled(false);
     }
 
     private void resolveSignInError() {
@@ -344,5 +281,6 @@ public class LoginActivity extends FragmentActivity implements
                 break;
         }
     }
+
 
 }

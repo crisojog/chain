@@ -65,7 +65,7 @@ public class TaskAdapter extends ArrayAdapter<TaskBean> {
             }
 
             ImageView imgType = (ImageView) v.findViewById(R.id.taskIcon);
-            imgType.setImageDrawable(mContext.getDrawable(drawables[p.getType()]));
+            imgType.setImageDrawable(mContext.getResources().getDrawable(drawables[p.getType()]));
 
             LinearLayout t = (LinearLayout) v.findViewById(R.id.taskIconLayout);
             ((GradientDrawable) t.getBackground()).setColor(mContext.getResources().getColor(colors[p.getType()]));

@@ -15,6 +15,7 @@ public class UserBean {
     public UserBean(String gplusID, String name) {
         this.gplusID = gplusID;
         this.name = name;
+        this.numTasks = 0;
     }
 
     public String getGplusID() {
@@ -33,6 +34,24 @@ public class UserBean {
         this.name = name;
     }
 
+    public Integer getNumTasks() {
+        return numTasks;
+    }
+
+    public void setNumTasks(Integer numTasks) {
+        this.numTasks = numTasks;
+    }
+
+    public void incNumTasks() {
+        numTasks++;
+    }
+
+    public void decNumTasks() {
+        numTasks--;
+        if (numTasks < 0) numTasks = 0;
+    }
+
     @Id String gplusID;
     String name;
+    Integer numTasks;
 }

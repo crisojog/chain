@@ -18,6 +18,7 @@ public class TaskBean {
         this.startDate = startDate;
         this.duration = duration;
         this.current = 0;
+        this.doneToday = false;
     }
 
 
@@ -85,6 +86,14 @@ public class TaskBean {
         this.name = name;
     }
 
+    public boolean isDoneToday() {
+        return doneToday;
+    }
+
+    public void setDoneToday(boolean doneToday) {
+        this.doneToday = doneToday;
+    }
+
     @Id String Id;
     @Index String userGplusID;
     int type;
@@ -93,6 +102,7 @@ public class TaskBean {
     long startDate;
     int duration;
     int current;
+    boolean doneToday;
 
     @Override
     public boolean equals(Object o) {
@@ -105,6 +115,7 @@ public class TaskBean {
         if (startDate != taskBean.startDate) return false;
         if (duration != taskBean.duration) return false;
         if (current != taskBean.current) return false;
+        if (doneToday != taskBean.doneToday) return false;
         if (Id != null ? !Id.equals(taskBean.Id) : taskBean.Id != null) return false;
         if (userGplusID != null ? !userGplusID.equals(taskBean.userGplusID) : taskBean.userGplusID != null)
             return false;
@@ -123,6 +134,7 @@ public class TaskBean {
         result = 31 * result + (int) (startDate ^ (startDate >>> 32));
         result = 31 * result + duration;
         result = 31 * result + current;
+        result = 31 * result + (doneToday ? 1 : 0);
         return result;
     }
 
