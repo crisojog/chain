@@ -21,24 +21,32 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.api.CommonStatusCodes;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.plus.People;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
+import com.google.android.gms.plus.model.people.PersonBuffer;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 
 
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity implements
+        ResultCallback<People.LoadPeopleResult> {
 
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
     private String[] mDrawerListItems;
     private LinearLayout mDrawerListLayout;
-
+    private ContentProvider mContentProvider;
 
     private static final String TAG = "MAIN";
     private static final int PROFILE_PIC_SIZE = 80;
 
+    private String gPlusId = null;
+    private ArrayList<String> mCirclesList, mImageList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,10 +54,7 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
 
         initNavigationDrawer();
-
-        if (savedInstanceState == null) {
-            startTaskListFragment(null);
-        }
+        mContentProvider = ContentProvider.getInstance();
     }
 
     public void startFriendListFragment() {
@@ -59,10 +64,15 @@ public class MainActivity extends BaseActivity {
                 .commit();
     }
 
-    public void startTaskListFragment(String id) {
+    public void startTaskListFragment(String gPlusId, boolean isFriend) {
         FragmentManager fragmentManager = getSupportFragmentManager();
+        Bundle bundle = new Bundle();
+        bundle.putString("gPlusId", gPlusId);
+        bundle.putBoolean("isFriend", isFriend);
+        TaskListFragment tlf = new TaskListFragment();
+        tlf.setArguments(bundle);
         fragmentManager.beginTransaction()
-                .replace(R.id.container, new TaskListFragment())
+                .replace(R.id.container, tlf)
                 .commit();
     }
 
@@ -76,6 +86,9 @@ public class MainActivity extends BaseActivity {
     public void onConnected(Bundle bundle) {
         super.onConnected(bundle);
         getProfileInformation();
+        Plus.PeopleApi.loadVisible(mGoogleApiClient, null)
+                .setResultCallback(this);
+        startTaskListFragment(gPlusId, false);
     }
 
     private void getProfileInformation() {
@@ -90,7 +103,8 @@ public class MainActivity extends BaseActivity {
                 String personPhotoUrl = currentPerson.getImage().getUrl();
                 String personGooglePlusProfile = currentPerson.getUrl();
                 String email = Plus.AccountApi.getAccountName(mGoogleApiClient);
-
+                gPlusId = currentPerson.getId();
+                mContentProvider.logUser(gPlusId, personName);
                 Log.e(TAG, "Id:" + currentPerson.getId()
                         + ", Name: " + personName
                         + ", plusProfile: " + personGooglePlusProfile
@@ -161,10 +175,10 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                int editedPosition = position+1;
+                int editedPosition = position + 1;
                 //Toast.makeText(MainActivity.this, "You selected item " + editedPosition, Toast.LENGTH_SHORT).show();
                 if (position == 0) {
-                    startTaskListFragment(null);
+                    startTaskListFragment(gPlusId, false);
                 } else {
                     startFriendListFragment();
                 }
@@ -252,4 +266,28 @@ public class MainActivity extends BaseActivity {
         super.onRestart();
         //getProfileInformation();
     }
+    
+    @Override
+    public void onResult(People.LoadPeopleResult peopleData) {
+        if (peopleData.getStatus().getStatusCode() == CommonStatusCodes.SUCCESS) {
+            mCirclesList.clear();
+            mImageList.clear();
+            PersonBuffer personBuffer = peopleData.getPersonBuffer();
+            try {
+                int count = personBuffer.getCount();
+                personBuffer.get(0).getImage();
+                for (int i = 0; i < count; i++) {
+                    mCirclesList.add(personBuffer.get(i).getId());
+                    mImageList.add(personBuffer.get(i).getImage().getUrl());
+                }
+            } finally {
+                personBuffer.close();
+            }
+
+            //mCirclesAdapter.notifyDataSetChanged();
+        } else {
+            Log.e(TAG, "Error requesting visible circles: " + peopleData.getStatus());
+        }
+    }
+
 }

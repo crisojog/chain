@@ -1,5 +1,6 @@
 package com.farapile.android.chain;
 
+import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -22,12 +23,18 @@ public class NewTaskActivity extends ActionBarActivity {
     private ContentProvider mContentProvider = null;
     private EditText mNameText, mDescText;
     private boolean hasFocus;
+    private String user;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_task);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+
+        Intent intent = getIntent();
+        user = intent.getStringExtra("user");
 
         final Spinner spinner = (Spinner) findViewById(R.id.type_spinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
@@ -47,11 +54,10 @@ public class NewTaskActivity extends ActionBarActivity {
             public void onClick(View view) {
                 //Toast.makeText(NewTaskActivity.this, "Clicked", Toast.LENGTH_SHORT).show();
                 int type = spinner.getSelectedItemPosition();
-                Log.d("asdfadsf", type + "");
 
                 mContentProvider.addTask(
                         UUID.randomUUID(),
-                        "asdf",
+                        user,
                         type,
                         mNameText.getText().toString(),
                         mDescText.getText().toString(),

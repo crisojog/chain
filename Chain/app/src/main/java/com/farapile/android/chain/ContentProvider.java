@@ -105,6 +105,13 @@ public class ContentProvider {
         ));
     }
 
+    public void logUser(String gPlusId, String name) {
+        new EndpointsLogUserAsyncTask().execute(new Pair<String, String>(
+                gPlusId,
+                name
+        ));
+    }
+
     private class EndpointsGetTasksAsyncTask extends AsyncTask<Pair<String, Callable>, Void, List<TaskBean>> {
 
         private Callable c;
@@ -211,6 +218,33 @@ public class ContentProvider {
                 Toast.makeText(context, "Could not update chain", Toast.LENGTH_SHORT).show();
         }
     }
+
+    private class EndpointsLogUserAsyncTask extends AsyncTask<Pair<String, String>, Void, Integer> {
+
+        private String gPlusId, name;
+
+        @Override
+        protected Integer doInBackground(Pair<String, String>... params) {
+            init();
+
+            gPlusId = params[0].first;
+            name = params[0].second;
+
+            try {
+                myApiService.logUser(gPlusId, name).execute();
+            } catch (IOException e) {
+                return 1;
+            }
+            return 0;
+        }
+
+
+        @Override
+        protected void onPostExecute(Integer result) {
+
+        }
+    }
+
 
     class Task {
         public String id, gPlusId, description, name;

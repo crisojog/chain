@@ -1,6 +1,5 @@
 package com.farapile.android.chain;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -49,7 +48,7 @@ public class FriendListFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 UserBean user = mFriendAdapter.getItem(position);
 
-                ((MainActivity)getActivity()).startTaskListFragment(user.getGplusID());
+                ((MainActivity)getActivity()).startTaskListFragment(user.getGplusID(), true);
             }
         });
 

@@ -45,7 +45,8 @@ public class MyEndpoint {
         return user;
     }
 
-    private UserBean findUser(String id) {
+    @ApiMethod(name = "findUser")
+    public UserBean findUser(@Named("id") String id) {
         return ofy().load().type(UserBean.class).id(id).now();
     }
 
@@ -55,10 +56,22 @@ public class MyEndpoint {
         return newUser;
     }
 
+    @ApiMethod(name = "filterFriends")
+    public ArrayList<UserBean> filterFriends(@Named("friends") ArrayList<String> friends) {
+        ArrayList<UserBean> friendsInDB = new ArrayList<>();
+        for(String id : friends) {
+            UserBean friend = findUser(id);
+            if (friend != null) {
+                friendsInDB.add(friend);
+            }
+        }
+        return friendsInDB;
+    }
+
     /* TASK PART */
 
     @ApiMethod(name = "createTask")
-      public TaskBean createTask(@Named("Id") String Id,
+    public TaskBean createTask(@Named("Id") String Id,
                                  @Named("userGplusID") String userGplusID,
                                  @Named("type") int type,
                                  @Named("name") String name,

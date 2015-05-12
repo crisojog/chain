@@ -14,7 +14,6 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 
 import com.farapile.android.chain.backend.myApi.model.TaskBean;
-import com.google.android.gms.plus.Plus;
 import com.melnykov.fab.FloatingActionButton;
 
 import java.util.concurrent.Callable;
@@ -26,6 +25,10 @@ public class TaskListFragment extends Fragment {
     private FloatingActionButton fab;
     private ContentProvider mContentProvider;
     private ProgressBar mProgressBar;
+
+    private String gPlusId;
+    private boolean isFriend;
+
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -33,10 +36,14 @@ public class TaskListFragment extends Fragment {
     public TaskListFragment() {
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_task_list, container, false);
+
+        gPlusId = getArguments().getString("gPlusId");
+        isFriend = getArguments().getBoolean("isFriend");
 
         mContentProvider = ContentProvider.getInstance();
         mTaskAdapter = new TaskAdapter(
@@ -74,10 +81,9 @@ public class TaskListFragment extends Fragment {
     }
 
     public void refreshTasks() {
-        String user = GoogleApi.mGoogleApiClient != null ? Plus.PeopleApi.getCurrentPerson(GoogleApi.mGoogleApiClient).getUrl() : "asdf";
         mProgressBar.setVisibility(View.VISIBLE);
 
-        mContentProvider.getTasks(new Pair<String, Callable>(user, new Callable() {
+        mContentProvider.getTasks(new Pair<String, Callable>(gPlusId, new Callable() {
             @Override
             public Integer call() throws Exception {
                 //mTaskAdapter.notifyDataSetChanged();
@@ -93,16 +99,21 @@ public class TaskListFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         Log.d("TAG", "onViewCreated");
         fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
-        fab.attachToListView(mListView);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                createNewTask();
-            }
-        });
+        if (isFriend) {
+            fab.setVisibility(View.GONE);
+        } else {
+            fab.attachToListView(mListView);
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    createNewTask();
+                }
+            });
+        }
     }
     private void createNewTask() {
         Intent intent = new Intent(getActivity(), NewTaskActivity.class);
+        intent.putExtra("user", gPlusId);
         startActivity(intent);
     }
 
