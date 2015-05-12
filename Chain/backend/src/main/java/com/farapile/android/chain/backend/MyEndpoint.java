@@ -100,5 +100,13 @@ public class MyEndpoint {
         return ofy().load().type(TaskBean.class).id(id).now();
     }
 
-    /* ENDORSEMENTS PART */
+    @ApiMethod(name = "createEndorsement")
+    public EndorsementBean addEndorsement(@Named("Id") String Id,
+                               @Named("fromUserID") String fromUserID,
+                               @Named("toUserID") String toUserID,
+                               @Named("taskID") String taskID) {
+        EndorsementBean newEndorsement = new EndorsementBean(Id, fromUserID, toUserID, taskID);
+        ofy().save().entities(newEndorsement).now();
+        return newEndorsement;
+    }
 }
