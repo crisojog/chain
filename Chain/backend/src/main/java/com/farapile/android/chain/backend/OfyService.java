@@ -14,6 +14,7 @@ public class OfyService {
     static {
         ObjectifyService.register(UserBean.class);
         ObjectifyService.register(TaskBean.class);
+        ObjectifyService.register(EndorsementBean.class);
     }
 
     public static Objectify ofy() {

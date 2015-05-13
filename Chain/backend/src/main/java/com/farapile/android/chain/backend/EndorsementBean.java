@@ -1,10 +1,12 @@
 package com.farapile.android.chain.backend;
 
+import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 
 /**
  * Created by Cristi on 5/12/2015.
  */
+@Entity
 public class EndorsementBean {
 
     public EndorsementBean() {}

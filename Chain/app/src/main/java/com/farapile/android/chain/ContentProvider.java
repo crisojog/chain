@@ -179,6 +179,15 @@ public class ContentProvider {
         }
     }
 
+    public void endorse(String from, String to, String taskId, Context c) {
+        new EndpointsAddEndorsementAsyncTask().execute(new Pair<Endorsement, Context>(
+                new Endorsement(
+                        from, to, taskId
+                ),
+                c
+        ));
+    }
+
     private class EndpointsGetTasksAsyncTask extends AsyncTask<Pair<String, Callable>, Void, List<TaskBean>> {
 
         private Callable c;
@@ -345,10 +354,45 @@ public class ContentProvider {
                 ContentProvider mContentProvider = ContentProvider.getInstance();
                 ArrayList<UserBean> friendList = mContentProvider.getFriendList();
                 if (friendList == null) friendList = new ArrayList<>();
-                friendList.add(result);
+                if (!friendList.contains(result)) friendList.add(result);
                 mContentProvider.setFriendList(friendList);
                 Log.d("asdf", "" + friendList.size());
             }
+        }
+    }
+
+    private class EndpointsAddEndorsementAsyncTask extends AsyncTask<Pair<Endorsement, Context>, Void, Integer> {
+
+        private Context context;
+        private Endorsement e;
+
+        @Override
+        protected Integer doInBackground(Pair<Endorsement, Context>... params) {
+            init();
+
+            context = params[0].second;
+            e = params[0].first;
+            try {
+                myApiService.createEndorsement(
+                        UUID.randomUUID().toString(),
+                        e.from,
+                        e.to,
+                        e.taskId
+                ).execute();
+            } catch (IOException e) {
+                e.printStackTrace();
+                return 1;
+            }
+            return 0;
+        }
+
+
+        @Override
+        protected void onPostExecute(Integer result) {
+            if (result == 0)
+                Toast.makeText(context, "You've just endorsed dis guy", Toast.LENGTH_SHORT).show();
+            else
+                Toast.makeText(context, "Could not endorse", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -365,6 +409,17 @@ public class ContentProvider {
             this.date = date;
             this.type = type;
             this.numDays = numDays;
+        }
+    }
+    class Endorsement {
+        public String from;
+        public String to;
+        public String taskId;
+
+        public Endorsement(String from, String to, String taskId) {
+            this.from = from;
+            this.to = to;
+            this.taskId = taskId;
         }
     }
 }

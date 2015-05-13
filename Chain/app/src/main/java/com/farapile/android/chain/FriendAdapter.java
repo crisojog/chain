@@ -1,6 +1,8 @@
 package com.farapile.android.chain;
 
 import android.content.Context;
+import android.graphics.BitmapFactory;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,7 +11,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.farapile.android.chain.backend.myApi.model.UserBean;
-import com.google.common.collect.HashBasedTable;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -54,14 +55,21 @@ public class FriendAdapter extends ArrayAdapter<UserBean> {
             ContentProvider cp = ContentProvider.getInstance();
             Hashtable<String, String> m =  cp.getImageMap();
             ImageView imgProfile = (ImageView) v.findViewById(R.id.friendIcon);
-            if (m.containsKey(p.getGplusID()))
+
+            if (m.containsKey(p.getGplusID())) {
+                Log.d("FriendAdapter", p.getName() + " " + m.get(p.getGplusID()));
                 new ContentProvider.LoadProfileImage(imgProfile).execute(m.get(p.getGplusID()));
+            } else {
+                Log.d("FriendAdapter", p.getName() + " no url");
+                imgProfile.setImageBitmap(BitmapFactory.decodeResource(mContext.getResources(),
+                        R.drawable.profile));
+            }
 
             TextView tasks = (TextView) v.findViewById(R.id.numTasks);
             if (!isLeaderBoard)
-                tasks.setText(p.getNumTasks() + "");
+                tasks.setText(p.getNumTasks() + " chains");
             else
-                tasks.setText(p.getEndorsement() + "");
+                tasks.setText(p.getEndorsement() + " endorsements");
         }
 
         return v;

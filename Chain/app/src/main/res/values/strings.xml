@@ -50,6 +50,8 @@
     <string name="label_progress">Progress</string>
     <string name="label_endorsements">Endorsements</string>
     <string name="action_logout">Logout</string>
+    <string name="friends_chains">Friends\' chains</string>
+    <string name="leaderboard">Leaderboard</string>
 
     <string-array name="type_array">
         <item>Sports</item>

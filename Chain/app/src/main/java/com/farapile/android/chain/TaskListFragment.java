@@ -80,8 +80,11 @@ public class TaskListFragment extends Fragment {
         });
 
         mProgressBar = (ProgressBar) rootView.findViewById(R.id.progressBar);
-        //if (!isFriend && (mContentProvider.getTaskList() == null || mContentProvider.getTaskList().size() == 0))
+        //if (!isFriend && (mContentProvider.getTaskList() == null || mContentProvider.getTaskList().size() == 0)) {
+        //    refreshTasks();
+        //} else if (isFriend) {
             refreshTasks();
+        //}
 
         if (isFriend)
             ((ActionBarActivity) getActivity()).getSupportActionBar().setTitle(name + "\'s chains");

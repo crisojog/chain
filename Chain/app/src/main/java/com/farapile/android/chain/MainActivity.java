@@ -57,7 +57,9 @@ public class MainActivity extends BaseActivity implements
     public void startFriendListFragment(Boolean isLeaderBoard) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FriendListFragment flf = new FriendListFragment();
-        flf.setIsLeaderBoard(isLeaderBoard);
+        Bundle bundle = new Bundle();
+        bundle.putBoolean("isLeaderBoard", isLeaderBoard);
+        flf.setArguments(bundle);
         fragmentManager.beginTransaction()
                 .replace(R.id.container, flf)
                 .commit();
@@ -112,6 +114,10 @@ public class MainActivity extends BaseActivity implements
                         + ", email: " + email
                         + ", Image: " + personPhotoUrl);
 
+                Hashtable<String, String> h = mContentProvider.getImageMap();
+                h.put(personGooglePlusProfile, personPhotoUrl);
+                mContentProvider.setImageMap(h);
+
                 TextView txtName = (TextView) findViewById(R.id.text_username);
                 TextView txtEmail = (TextView) findViewById(R.id.text_email);
                 ImageView imgProfilePic = (ImageView) findViewById(R.id.img_user);
@@ -127,6 +133,7 @@ public class MainActivity extends BaseActivity implements
                         + PROFILE_PIC_SIZE;
 
                 new ContentProvider.LoadProfileImage(imgProfilePic).execute(personPhotoUrl);
+                mDrawerToggle.syncState();
 
             } else {
                 Toast.makeText(getApplicationContext(),
@@ -272,6 +279,7 @@ public class MainActivity extends BaseActivity implements
                     }
                 });
                 mContentProvider.setImageMap(mImageMap);
+                mDrawerToggle.syncState();
             }
 
             //mCirclesAdapter.notifyDataSetChanged();

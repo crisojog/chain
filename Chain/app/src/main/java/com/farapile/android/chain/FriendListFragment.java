@@ -2,6 +2,7 @@ package com.farapile.android.chain;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,22 +30,20 @@ public class FriendListFragment extends Fragment {
     public class CustomComparator implements Comparator<UserBean> {
         @Override
         public int compare(UserBean o1, UserBean o2) {
-            return o1.getEndorsement() - o2.getEndorsement();
+            return o2.getEndorsement() - o1.getEndorsement();
         }
-    }
-
-    public void setIsLeaderBoard(Boolean isLeaderBoard) {
-        this.isLeaderBoard = isLeaderBoard;
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_friend_list, container, false);
 
+        isLeaderBoard = getArguments().getBoolean("isLeaderBoard");
         mContentProvider = ContentProvider.getInstance();
-        ArrayList<UserBean> users = mContentProvider.getFriendList();
+        ArrayList<UserBean> users = (ArrayList<UserBean>) mContentProvider.getFriendList().clone();
         if (isLeaderBoard) {
-            users.add(mContentProvider.getMyUser());
+            if (!users.contains(mContentProvider.getMyUser()))
+                users.add(mContentProvider.getMyUser());
             Collections.sort(users, new CustomComparator());
         }
 
@@ -61,11 +60,16 @@ public class FriendListFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 UserBean user = mFriendAdapter.getItem(position);
-
-                ((MainActivity)getActivity()).startTaskListFragment(user.getGplusID(), user.getName(), true);
+                boolean isFriend = !user.getGplusID().equals(mContentProvider.getMyUser().getGplusID());
+                ((MainActivity) getActivity()).startTaskListFragment(user.getGplusID(), user.getName(), isFriend);
             }
         });
 
+        if (!isLeaderBoard) {
+            ((ActionBarActivity) getActivity()).getSupportActionBar().setTitle(R.string.friends_chains);
+        } else {
+            ((ActionBarActivity) getActivity()).getSupportActionBar().setTitle(R.string.leaderboard);
+        }
         return rootView;
     }
 }

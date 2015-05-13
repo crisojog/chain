@@ -125,6 +125,11 @@ public class MyEndpoint {
                                @Named("taskID") String taskID) {
         EndorsementBean newEndorsement = new EndorsementBean(Id, fromUserID, toUserID, taskID);
         ofy().save().entities(newEndorsement).now();
+
+        UserBean user = findUser(toUserID);
+        user.endorsement++;
+        ofy().save().entities(user).now();
+
         return newEndorsement;
     }
 }

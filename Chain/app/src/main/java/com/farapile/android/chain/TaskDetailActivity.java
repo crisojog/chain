@@ -24,6 +24,8 @@ public class TaskDetailActivity extends ActionBarActivity {
     long startDate;
     int duration;
     int current;
+    boolean isFriend = false;
+    ContentProvider mContentProvider;
 
     int[] colors = {
             R.color.sports,
@@ -39,6 +41,7 @@ public class TaskDetailActivity extends ActionBarActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         String[] types = getResources().getStringArray(R.array.type_array);
+        mContentProvider = ContentProvider.getInstance();
 
         Intent intent = getIntent();
         Id = intent.getStringExtra("Id");
@@ -49,6 +52,7 @@ public class TaskDetailActivity extends ActionBarActivity {
         startDate = intent.getLongExtra("startDate", 0);
         duration = intent.getIntExtra("duration", 0);
         current = intent.getIntExtra("current", 0);
+        isFriend = !userGplusID.equals(mContentProvider.getMyUser().getGplusID());
 
         Log.d("TaskDetailActivity", name + " " + types[type] + " " + description);
         getSupportActionBar().setTitle(name);
@@ -88,8 +92,18 @@ public class TaskDetailActivity extends ActionBarActivity {
         }
 
         final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        if (duration != 0) {
-            final ContentProvider mContentProvider = ContentProvider.getInstance();
+
+        if (isFriend) {
+            fab.setImageDrawable(getResources().getDrawable(R.drawable.endorse));
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mContentProvider.endorse(mContentProvider.getMyUser().getGplusID(), userGplusID, Id, TaskDetailActivity.this);
+                    fab.setVisibility(View.GONE);
+                }
+            });
+        } else {
+            fab.setImageDrawable(getResources().getDrawable(R.drawable.ic_check_today));
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -98,8 +112,6 @@ public class TaskDetailActivity extends ActionBarActivity {
                     fab.setVisibility(View.GONE);
                 }
             });
-        } else {
-            fab.setVisibility(View.GONE);
         }
     }
 
